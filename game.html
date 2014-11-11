@@ -1,0 +1,60 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Frogger </title>
+	<link href="css/style.css" rel="stylesheet"/>
+</head>
+<body>
+
+	<canvas id="frogger-canvas" ></canvas>
+	<script src="js/State.js"></script>
+	<script src="js/input.js"></script>
+	<script src="js/constants.js"></script>
+	<script src="js/point.js"></script>
+	<script src="js/gameImage.js"></script>
+	<script src="js/gamePiece.js"></script>
+	<script src="js/gameSprite.js"></script>
+	<script src="js/Player.js"></script>
+	<script src="js/gameAssets.js"></script>
+	<script src="js/alllevels.js"></script>
+	<script src="js/gameLevel.js"></script>
+	<script src="js/frogger.js"></script>
+	
+	<script>
+	
+		var frogger= new Frogger("frogger-canvas",userInput,windowSize);
+
+	  function gameLoop()
+		{
+			frogger.update();
+			window.requestAnimationFrame(gameLoop);
+		};
+		gameLoop();
+			/*
+
+				
+		function adjustPosition()
+		{
+			var halfNodeX =  gameLevel.nodeSize.x/2;
+			var halfNodeY =  gameLevel.nodeSize.y/2;
+			if(userInput.pressedKeys[userInput.DOWN])
+				verticalIncr = verticalIncr + gameLevel.nodeSize.y +halfNodeY;
+			if(userInput.pressedKeys[userInput.UP])
+				verticalIncr = verticalIncr - gameLevel.nodeSize.y -halfNodeY;
+			if(userInput.pressedKeys[userInput.RIGHT])
+				horizontalIncr = horizontalIncr + gameLevel.nodeSize.x + halfNodeX;
+			if(userInput.pressedKeys[userInput.LEFT])
+				horizontalIncr = horizontalIncr - gameLevel.nodeSize.x - halfNodeX;
+			//horizontalIncr += ;
+			//verticalIncr += halfNodeY;
+		}
+			*/
+			
+	
+	</script>
+</body>
+</html>
+
+
+			

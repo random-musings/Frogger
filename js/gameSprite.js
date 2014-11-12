@@ -10,7 +10,6 @@ var GameSprite  = function( gamePiece, //gamePiece.js
 														appearStart,appearEnd //point.js when in the level the object appears/disappears
 														)
 {
-	console.log("gamesprite before  init "+gamePiece.imageIndex);
 	this.parent.constructor.call(this,gamePiece.imageIndex,
 																		gamePiece.canWalkOn,
 																		gamePiece.damageInflicted,

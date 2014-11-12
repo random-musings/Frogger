@@ -8,7 +8,6 @@ var GameLevel = function( levelIndex,
 													context
 													)
 {
-console.log("gameLevel constructor");
 	//create a copy of the level,maps and all elements
 	this.map={};
 	this.levelIx =levelIndex; 
@@ -20,7 +19,7 @@ console.log("gameLevel constructor");
 	
 	//reset the node size, map layout
   //to fit the canvas (so we don't overflow)
-	this.sizeToWindow();
+	this.setNodeSize();
 };
 
 GameLevel.prototype.init = function()
@@ -68,7 +67,12 @@ GameLevel.prototype.init = function()
 			this.rewards[rewardIndex] = reward.clone();
 	}
 	
+	//init the player
 	this.player = level.player.clone();
+	
+	//copy the level settings
+	this.velocityMin = level.velocityMin;
+	this.velocityMax  = level.velocityMax;
 }
 
 
@@ -77,6 +81,7 @@ GameLevel.prototype.update = function()
 	//update velocities
 	//trigger events
 	this.updateEnemies();
+	this.updatePlayer();
 };
 
 GameLevel.prototype.draw = function()
@@ -144,10 +149,10 @@ GameLevel.prototype.drawEnemies = function()
 		var enemy = this.enemies[enemyIx];
 		if(enemy)
 		{
-			var row = this.calcRow(enemy.position.y, this.nodeSize.y);//(enemy.position.y +0.5) * this.nodeSize.y;
 			var enemyImageIndex = enemy.imageIndex;
 			this.context.drawImage(GameAssets[enemyImageIndex].img,
-											enemy.position.x, row,
+											this.calcCol(enemy.position.x,this.nodeSize.x),
+											 this.calcRow(enemy.position.y, this.nodeSize.y),
 											this.nodeSize.x,this.nodeSize.y);
 		}
 	}
@@ -169,7 +174,6 @@ GameLevel.prototype.drawPlayer = function()
 											this.calcCol(player.position.x,this.nodeSize.x),
 											this.calcRow(player.position.y,this.nodeSize.y),
 											this.nodeSize.x,this.nodeSize.y);
-
 };
 
 GameLevel.prototype.drawToolBar = function()
@@ -185,6 +189,26 @@ GameLevel.prototype.drawToolBar = function()
 											0,
 											borderBottom,
 											this.context.canvas.width ,this.context.canvas.height);
+	//draw the stats
+	//draw lives
+	this.context.font = "bold 20pt Calibri";
+	var toolY = (this.nodeSize.y *( this.map.cols+1));
+	var textY = toolY+this.nodeSize.y/1.3;
+	this.context.drawImage(GameAssets.HEART.img,
+											this.nodeSize.x*2, toolY,
+											this.nodeSize.x,this.nodeSize.y);
+	this.context.fillText(" x"+this.player.lives,
+											this.nodeSize.x*3, textY);
+	//draw points
+	this.context.drawImage(GameAssets.GEMBLUE.img,
+											this.nodeSize.x*4, toolY,
+											this.nodeSize.x,this.nodeSize.y);
+	this.context.fillText(" x"+this.player.points,
+											this.nodeSize.x*5, textY);
+											
+	//draw level
+	this.context.fillText(" Level "+this.levelIx,
+											0, textY);
 };
 
 
@@ -197,16 +221,149 @@ GameLevel.prototype.updateEnemies = function(deltaTime)
 		if(enemy)
 			enemy.position.add(enemy.velocity.x, enemy.velocity.y);
 		
-		var mapMax = (this.nodeSize.x * ( this.map.cols +1.5));
-		var mapMin = -this.nodeSize.x ;
+		var mapMax =  this.map.cols +2;
+		var mapMin = -2 ;
 		
 		if(enemy.position.x> mapMax)
 			enemy.position.x = mapMin;
+
 		if(	enemy.position.x < mapMin)
 			enemy.position.x = mapMax;
 	}
 };
 
+
+
+
+GameLevel.prototype.playerOnEnemy = function()
+{
+	for(enemyIx in this.enemies)
+	{
+		var enemy = this.enemies[enemyIx];
+		if(enemy)
+		{
+			var distanceX =Math.abs( this.player.sprite.position.x - enemy.position.x);
+			var distanceY = Math.abs(this.player.sprite.position.y - enemy.position.y);
+			if( distanceX < 0.5
+				&& distanceY < 0.5)
+			{
+				return enemy;
+			}
+		}
+	}
+	return null;
+};
+
+	//check to see if the player is touching a violent enemy
+	//or standing on a tile that does damage
+GameLevel.prototype.isPlayerSafe = function()
+{
+	var onEnemy = this.playerOnEnemy();
+	if(onEnemy && onEnemy.damageInflicted>0)
+		return false;
+		
+	//check to see if player is on a bad tile
+	var mapCol = Math.floor(this.player.sprite.position.x);
+	var mapRow = Math.floor(this.player.sprite.position.y);
+	var index = mapCol * mapRow  + mapCol;
+	var mapTile = this.map.nodes[index];		
+	return ( mapTile.damageInflicted==0 );
+};
+
+//check to see where the player is 
+//adjust the velocity accordingly
+GameLevel.prototype.updatePlayerVelocity = function()
+{
+	//check if player is at edges of map then stop velocity
+	if(this.player.sprite.position.x<=0
+		|| this.player.sprite.position.x>=this.map.cols)
+	{
+		this.player.sprite.velocity.x =0;
+		this.player.sprite.velocity.y =0;
+		return;
+	}
+	
+	//check to see if we landed on a friendly player that is moving
+	//if so then lets ride it
+	var onFriendlyEnemy = this.playerOnEnemy();
+	if(onFriendlyEnemy && onFriendlyEnemy.damageInflicted==0)
+	{
+		this.player.sprite.velocity.x = this.player.sprite.velocity.x;
+		this.player.sprite.velocity.y = this.player.sprite.velocity.y;
+	}
+	this.player.sprite.position.x += this.player.sprite.velocity.x;
+	this.player.sprite.position.y += this.player.sprite.velocity.y;
+};
+
+//player touched a violent enemy or passed the level
+//reset them back to the beginning
+GameLevel.prototype.resetPlayer = function()
+{
+	this.player.sprite.velocity.x = 0;
+	this.player.sprite.velocity.y = 0;
+	this.player.sprite.position.x = 3;
+	this.player.sprite.position.y = 5;
+};
+
+GameLevel.prototype.resetGame = function()
+{
+	var modifier  =this.levelIx-1; 
+	for(enemyIx in this.enemies)
+	{
+		var enemy = this.enemies[enemyIx];
+		if(enemy)
+		{
+			enemy.velocity.x  += (enemy.velocity.x<0)?0.01*modifier:-0.01*modifier; 
+		}
+	}
+	
+	this.levelIx =1;
+	this.player.lives=5;
+	this.points = 0;
+	this.resetPlayer();
+};
+
+GameLevel.prototype.loadNextLevel = function()
+{
+	this.levelIx++;
+	//accelerate the vehicles
+	for(enemyIx in this.enemies)
+	{
+		var enemy = this.enemies[enemyIx];
+		if(enemy)
+		{
+			enemy.velocity.x  += (enemy.velocity.x<0)?-0.01:0.01; 
+		}
+	}
+	this.resetPlayer();
+}
+
+GameLevel.prototype.updatePlayer = function()
+{
+	//move the player through the world
+	this.updatePlayerVelocity();
+	
+	//check to see if the player landed on an enemy or unsafe square
+	if(!this.isPlayerSafe())
+	{	//player landed on unsafe spot
+		this.player.lives--;
+		this.resetPlayer();
+	}
+
+	//we ran out of lives start the game over
+	if(this.player.lives<=0)
+	{
+		console.log("reset game");
+		this.resetGame();
+	}
+	
+	//we reached the other side load the next level
+	if(this.player.sprite.position.y ==0)
+	{
+		this.loadNextLevel();
+	}
+
+};
 
 
 GameLevel.prototype.setNodeSize = function()
@@ -224,41 +381,6 @@ GameLevel.prototype.setNodeSize = function()
 	this.nodeSize.y = this.nodeRatio.y *this.nodeSize.x;
 };
 
-
-//take the x,y
-GameLevel.prototype.resetGamePiecesToWindow = function()
-{
-	for(enemyIx in this.enemies)
-	{
-		var enemy = this.enemies[enemyIx];
-		if(enemy)
-		{
-			enemy.position.x = (enemy.position.x % this.windowSize.x);
-		}
-	}
-	
-	for(rewardIx in this.rewards)
-	{
-		var reward = this.rewards[enemyIx];
-		if(reward)
-		{
-			reward.position.x = (reward.position.x % this.windowSize.x);
-		}
-	}
-	
-};
-
-
-GameLevel.prototype.sizeToWindow = function()
-{
-	//reset the map nodes
-	this.setNodeSize();
-	
-	//reset the y positions for each enemy
-	this.resetGamePiecesToWindow();
-	
-	//resize the toolbars
-};
 
 
 GameLevel.prototype.handleKeyPress = function(userInput)//input.js
@@ -291,6 +413,6 @@ GameLevel.prototype.handleKeyPress = function(userInput)//input.js
 		player.position.y +=verticalIncr;
 		player.position.x +=horizontalIncr;
 		this.player.state = State.JUMP;
-		}
+	}
 		
 };

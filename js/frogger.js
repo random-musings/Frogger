@@ -16,15 +16,11 @@ var Frogger = function(canvasId ,userInput,windowResized)
 
 Frogger.prototype.resize = function()
 {
-	if(this.windowSize.resized 
-		&& this.windowSize.width>350 
-		&& this.windowSize.height>400
-		&& this.windowSize.width<900 
-		&& this.windowSize.height<900)
+	if(this.windowSize.resized )
 	{
 		this.context.canvas.width = this.windowSize.width;
 		this.context.canvas.height = this.windowSize.height;
-		this.gameLevel.sizeToWindow();
+		this.gameLevel.setNodeSize();
 		this.windowSize.resized= false;
 	}	
 };

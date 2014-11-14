@@ -14,20 +14,24 @@
 
 /*
 * @constructor {Player}
+* @extends GameSprite
 * @description creates a player
 */
 var Player  =  function( playerSprite, //the GameSprite.js
 														points,				//current number of points
 														lives)				//current number of lives
 {
-	this.sprite = new GameSprite(playerSprite, 
-															playerSprite.position.x,playerSprite.position.y, // placement in columns of enemy
-															playerSprite.velocity.x,playerSprite.velocity.y, // speed/direction of item in pixels
-															playerSprite.size.x,playerSprite.size.y, // used to calculate the bounding/collision radius
-															playerSprite.appearingTime.x,playerSprite.appearingTime.y );									
+	GameSprite.call(this,playerSprite, 
+									playerSprite.position.x,playerSprite.position.y, // placement in columns of enemy
+									playerSprite.velocity.x,playerSprite.velocity.y, // speed/direction of item in pixels
+									playerSprite.size.x,playerSprite.size.y, // used to calculate the bounding/collision radius
+									playerSprite.appearingTime.x,playerSprite.appearingTime.y );									
 	this.points = points;
 	this.lives = lives;
 };
+
+Player.prototype  = Object.create(GameSprite.prototype);
+Player.prototype.constructor = Player;
 
 /*
 * @returns {Player}
@@ -35,9 +39,8 @@ var Player  =  function( playerSprite, //the GameSprite.js
 */
 Player.prototype.clone = function()
 {
-
 	var newPlayer = new Player(
-					this.sprite,
+					this,
 					this.points,
 					this.lives
 					);

@@ -240,7 +240,7 @@ GameLevel.prototype.drawRewards = function()
 GameLevel.prototype.drawPlayer = function()
 {
 
-	var player = this.player.sprite;
+	var player = this.player;
 	var imageIndex = player.imageIndex;
 	this.context.drawImage(GameAssets[imageIndex].img,
 											this.calcOffset(player.position.x,this.nodeSize.x),
@@ -401,8 +401,8 @@ GameLevel.prototype.playerOnReward = function()
 			 (now)< (reward.appearingTime.y +reward.lastDisplayed) )
 		{
 			//are we standing close to it?
-			var distanceX =Math.abs( this.player.sprite.position.x - reward.position.x);
-			var distanceY = Math.abs(this.player.sprite.position.y - reward.position.y);
+			var distanceX =Math.abs( this.player.position.x - reward.position.x);
+			var distanceY = Math.abs(this.player.position.y - reward.position.y);
 			if( distanceX < 0.9 && distanceY < 0.5)
 			{	//player near reward - give it to him
 					return reward;
@@ -427,8 +427,8 @@ GameLevel.prototype.playerOnEnemy = function()
 		var enemy = this.enemies[enemyIx];
 		if(enemy)
 		{
-			var distanceX =Math.abs( this.player.sprite.position.x - enemy.position.x);
-			var distanceY = Math.abs(this.player.sprite.position.y - enemy.position.y);
+			var distanceX =Math.abs( this.player.position.x - enemy.position.x);
+			var distanceY = Math.abs(this.player.position.y - enemy.position.y);
 			if( distanceX < 0.6 && distanceY < 0.5)
 			{
 				return enemy;
@@ -456,8 +456,8 @@ GameLevel.prototype.isPlayerSafe = function()
 		return false;
 	}
 	//check to see if player is on a bad tile
-	var mapCol = Math.floor(this.player.sprite.position.x);
-	var mapRow = Math.floor(this.player.sprite.position.y);
+	var mapCol = Math.floor(this.player.position.x);
+	var mapRow = Math.floor(this.player.position.y);
 	var index = mapRow * (this.map.rows+1)  + mapCol;
 	var mapTile = this.map.nodes[index];		
 	return ( mapTile.damageInflicted==0 );
@@ -473,16 +473,16 @@ GameLevel.prototype.isPlayerSafe = function()
 GameLevel.prototype.updatePlayerVelocity = function()
 {
 	//check if player is at edges of map then stop velocity
-	if(this.player.sprite.position.x<=0	&& this.player.sprite.velocity.x<0)
+	if(this.player.position.x<=0	&& this.player.velocity.x<0)
 	{
-		this.player.sprite.velocity.x =0;
-		this.player.sprite.velocity.y =0;
+		this.player.velocity.x =0;
+		this.player.velocity.y =0;
 		return;
 	}
-	if(this.player.sprite.position.x>=this.map.cols && this.player.sprite.velocity.x>0)
+	if(this.player.position.x>=this.map.cols && this.player.velocity.x>0)
 	{
-		this.player.sprite.velocity.x =0;
-		this.player.sprite.velocity.y =0;
+		this.player.velocity.x =0;
+		this.player.velocity.y =0;
 		return;
 	}
 	
@@ -494,15 +494,15 @@ GameLevel.prototype.updatePlayerVelocity = function()
 		//adjust the player velocity to the gamePiece velocity
 		var velocityXMod  = onFriendlyEnemy.velocity.x<0?-1*this.velocityModifer:this.velocityModifer;
 		var velocityYMod  = 0;
-		this.player.sprite.velocity.x = onFriendlyEnemy.velocity.x + velocityXMod;
-		this.player.sprite.velocity.y = onFriendlyEnemy.velocity.y + velocityYMod;
+		this.player.velocity.x = onFriendlyEnemy.velocity.x + velocityXMod;
+		this.player.velocity.y = onFriendlyEnemy.velocity.y + velocityYMod;
 	}else
 	{
-		this.player.sprite.velocity.x =0;
-		this.player.sprite.velocity.y=0;
+		this.player.velocity.x =0;
+		this.player.velocity.y=0;
 	}
-	this.player.sprite.position.x += this.player.sprite.velocity.x;
-	this.player.sprite.position.y += this.player.sprite.velocity.y;
+	this.player.position.x += this.player.velocity.x;
+	this.player.position.y += this.player.velocity.y;
 };
 
 /*
@@ -520,10 +520,10 @@ GameLevel.prototype.resetPlayer = function()
 		this.player.lives = 5;
 		this.player.points = 0;
 	}
-	this.player.sprite.velocity.x = 0;
-	this.player.sprite.velocity.y = 0;
-	this.player.sprite.position.x = 3;
-	this.player.sprite.position.y = 5;
+	this.player.velocity.x = 0;
+	this.player.velocity.y = 0;
+	this.player.position.x = 3;
+	this.player.position.y = 5;
 };
 
 /*
@@ -644,7 +644,7 @@ GameLevel.prototype.updatePlayer = function()
 		this.resetGame();
 	
 	//we reached the other side load the next level
-	if(this.player.sprite.position.y ==0)
+	if(this.player.position.y ==0)
 		this.loadNextLevel();
 
 };
@@ -683,7 +683,7 @@ GameLevel.prototype.setNodeSize = function()
 */
 GameLevel.prototype.handleKeyPress = function(userInput)//input.js
 {
-	var player = this.player.sprite;
+	var player = this.player;
 	var verticalIncr =0;
 	var horizontalIncr = 0;
 	

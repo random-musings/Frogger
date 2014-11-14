@@ -31,12 +31,12 @@ var GameSprite  = function( gamePiece, //gamePiece.js
 														appearStart,appearEnd //point.js when in the level the object appears/disappears
 														)
 {
-	this.parent.constructor.call(this,gamePiece.imageIndex,
-																		gamePiece.canWalkOn,
-																		gamePiece.damageInflicted,
-																		gamePiece.pointsAwarded,
-																		gamePiece.livesAwarded,
-																		gamePiece.isKey);
+	GamePiece.call(this,gamePiece.imageIndex,
+											gamePiece.canWalkOn,
+											gamePiece.damageInflicted,
+											gamePiece.pointsAwarded,
+											gamePiece.livesAwarded,
+											gamePiece.isKey);
 
 	this.position = new Point(posX,posY);
 	this.velocity = new Point(velX,velY);

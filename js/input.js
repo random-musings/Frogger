@@ -5,13 +5,21 @@
 // window resized
 //
 // Class hierarchy
-// Main.js
+// game.html
 //		|
 //		|_input.js
 //
+//Frogger.js is given passed the userInput & windowSize variables
+// so it can track the events 
+// and send them to GameLevel.js
 
 
-//holds the keys pressed by the user
+/*
+* @constructor	
+*	@description 
+*		holds the keys pressed by the user
+*
+*/
 var KeysPressed = function()
 {
 	this.SPACE=32;
@@ -24,6 +32,12 @@ var KeysPressed = function()
 	this.timeLastPressed=0; //used to avoid double key presses
 }
 
+/*
+* @returns void
+*	@description 
+*		clears the array of key presses to prevent accidental double keying
+*		called by the Frogger.handleKeyPress() 
+*/
 KeysPressed.prototype.resetArrows = function()
 {
 	this.pressedKeys[this.SPACE] =false;
@@ -32,7 +46,15 @@ KeysPressed.prototype.resetArrows = function()
 	this.pressedKeys[this.RIGHT] =false;
 	this.pressedKeys[this.DOWN] =false;
 }
-//called whenever a key is pressed or released
+
+/*
+* @returns void
+* @param {number}	which key was pressed/released
+*	@param {boolean} indicates to activate/disable the key
+*	@description 
+*		called whenever a key is pressed or released
+*		attached to the key up and key down events
+*/
 KeysPressed.prototype.setKey = function(key,status)
 {
 	var d = new Date();
@@ -40,7 +62,14 @@ KeysPressed.prototype.setKey = function(key,status)
 	userInput.timeLastPressed = d.getTime();;
 };
 
-//holds the current window width & height
+
+/*
+* @constructor
+* @param {number}	newWidth
+*	@param {number} newHeight
+*	@description 
+*		tracks window resize events
+*/
 var WindowResized = function(startWidth, startHeight)
 {
 	this.width = startWidth;
@@ -48,7 +77,11 @@ var WindowResized = function(startWidth, startHeight)
 	this.resized = false;
 }
 
-//called whenever the window is resized
+/*
+* @returns void
+*	@description 
+*		called whenever the window is resized
+*/
 WindowResized.prototype.resizeWindow = function()
 {
 	this.width = window.innerWidth;
@@ -56,34 +89,57 @@ WindowResized.prototype.resizeWindow = function()
 	this.resized = true;
 }
 
-//events we listen to	
-//user presses key
+
+/*
+* @returns void
+*	@description 
+*		attaches the keydown event to function userInput.setKey()
+*/
 document.addEventListener('keydown', function(e) {
 	userInput.setKey(e.keyCode,true);
 });
 
-//user releases key
+/*
+* @returns void
+*	@description 
+*		attaches the keyup event to function userInput.setKey()
+*/
 document.addEventListener('keyup', function(e) {
 	 userInput.setKey(e.keyCode,false);
 });
 
-//window loses focus
+/*
+* @returns void
+*	@description 
+*		resets keys when window loses focus
+*/
 window.addEventListener('blur', function() {
 		userInput.pressedKeys = {};
 });
 
+/*
+* @returns void
+*	@description 
+*		listens to key press events
+*/
 window.input = {
 			isDown: function(key) {
 					return  userInput.pressedKeys[key.toUpperCase()];
 			}
 	};
 	
-	//window is resized by user
+/*
+* @returns void
+*	@description 
+*		listens to the resize event
+*/
 window.addEventListener('resize' , function(event)
 {
 	windowSize.resizeWindow();
 });
 	
-
+//holds the key presses (passed to Frogger)
 var userInput = new KeysPressed();
+
+//holds the window resize event (passed to Frogger)
 var windowSize = new WindowResized(window.innerWidth,window.innerHeight);

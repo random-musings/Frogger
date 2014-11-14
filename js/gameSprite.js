@@ -57,14 +57,8 @@ GameSprite.prototype.parent = GamePiece.prototype;
 */
 GameSprite.prototype.clone = function()
 {
-	var gamePiece  = new GamePiece(this.imageIndex,
-																		this.canWalkOn,
-																		this.damageInflicted,
-																		this.pointsAwarded,
-																		this.livesAwarded,
-																		this.isKey);
 	var newSprite = new GameSprite(
-							gamePiece,
+							this,
 							this.position.x,this.position.y,
 							this.velocity.x, this.velocity.y,
 							this.size.x, this.size.y,

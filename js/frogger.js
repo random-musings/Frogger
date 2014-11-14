@@ -62,7 +62,7 @@ Frogger.prototype.handleKeyPress = function()
 {
 	this.gameLevel.handleKeyPress(this.userInput);
 	this.userInput.resetArrows();
-}
+};
 
 /*
 * @returns void

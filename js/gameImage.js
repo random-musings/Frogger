@@ -20,4 +20,4 @@ var GameImage = function(index,src)
 	this.index = index;
 	this.img = new Image();
 	this.img.src = src;
-}
+};

@@ -76,7 +76,7 @@ var Enemies =
 var Players =
 {
 	'FROG': new GamePiece(GameAssets.FROG.index,true,0,0,0,false),
-}
+};
 
 var Rewards = 
 {

@@ -27,10 +27,10 @@ var KeysPressed = function()
 	this.UP = 38;
 	this.RIGHT = 39;
 	this.DOWN = 40;
-  this.timePressedTolerance; //the time allowed between key presses (prevents accidental double presses
+  this.timePressedTolerance=0; //the time allowed between key presses (prevents accidental double presses
 	this.pressedKeys=[];
 	this.timeLastPressed=0; //used to avoid double key presses
-}
+};
 
 /*
 * @returns void
@@ -45,7 +45,7 @@ KeysPressed.prototype.resetArrows = function()
 	this.pressedKeys[this.UP] =false;
 	this.pressedKeys[this.RIGHT] =false;
 	this.pressedKeys[this.DOWN] =false;
-}
+};
 
 /*
 * @returns void
@@ -59,7 +59,7 @@ KeysPressed.prototype.setKey = function(key,status)
 {
 	var d = new Date();
 	userInput.pressedKeys[key] = status;
-	userInput.timeLastPressed = d.getTime();;
+	userInput.timeLastPressed = d.getTime();
 };
 
 
@@ -75,7 +75,7 @@ var WindowResized = function(startWidth, startHeight)
 	this.width = startWidth;
 	this.height = startHeight;
 	this.resized = false;
-}
+};
 
 /*
 * @returns void
@@ -87,7 +87,7 @@ WindowResized.prototype.resizeWindow = function()
 	this.width = window.innerWidth;
 	this.height = window.innerHeight;
 	this.resized = true;
-}
+};
 
 
 /*

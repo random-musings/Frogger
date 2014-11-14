@@ -102,7 +102,7 @@ GameLevel.prototype.init = function()
 	//init the player
 	this.player = level.player.clone();
 	this.velocityModifer =0;
-}
+};
 
 // *******************
 // ** DRAW FUNCTIONS
@@ -177,7 +177,7 @@ GameLevel.prototype.drawMap = function()
 GameLevel.prototype.calcOffset = function(position,nodeSize)
 {
 	return  (position ) * nodeSize;
-}
+};
 
 
 /*
@@ -290,7 +290,7 @@ GameLevel.prototype.drawToolBar = function()
 											this.nodeSize.x*5, textY);
 											
 	//draw level
-	var level = this.levelIx ==0?1:this.levelIx;
+	var level = this.levelIx === 0?1:this.levelIx;
 	this.context.fillText(' Level '+level,0, textY);
 };
 
@@ -336,7 +336,7 @@ GameLevel.prototype.updateRewards = function()
 		{
 			//time has elapsed hide the reward
 			//or if the reward has been reset - move it
-			if(((currTime - reward.lastDisplayed)> reward.appearingTime.y) || (reward.lastDisplayed==0))
+			if(((currTime - reward.lastDisplayed)> reward.appearingTime.y) || (reward.lastDisplayed===0))
 			{
 				reward.lastDisplayed = currTime;
 				//change the position
@@ -355,7 +355,7 @@ GameLevel.prototype.updateRewards = function()
 *		advances the enemies on the map
 *		called by: GameLevel.update()
 */
-GameLevel.prototype.updateEnemies = function(deltaTime)
+GameLevel.prototype.updateEnemies = function()
 {
 	var length = this.enemies.length;
 	for(var enemyIx=0;enemyIx<length;enemyIx++)
@@ -451,7 +451,7 @@ GameLevel.prototype.isPlayerSafe = function()
 	if(onEnemy)
 	{
 		//if the enemy does no damage allow it
-		if( onEnemy.damageInflicted==0)
+		if( onEnemy.damageInflicted===0)
 			return true;
 		return false;
 	}
@@ -460,7 +460,7 @@ GameLevel.prototype.isPlayerSafe = function()
 	var mapRow = Math.floor(this.player.position.y);
 	var index = mapRow * (this.map.rows+1)  + mapCol;
 	var mapTile = this.map.nodes[index];		
-	return ( mapTile.damageInflicted==0 );
+	return ( mapTile.damageInflicted===0 );
 };
 
 /*
@@ -489,7 +489,7 @@ GameLevel.prototype.updatePlayerVelocity = function()
 	//check to see if we landed on a friendly player that is moving
 	//if so then lets ride it
 	var onFriendlyEnemy = this.playerOnEnemy();
-	if(onFriendlyEnemy && onFriendlyEnemy.damageInflicted==0)
+	if(onFriendlyEnemy && onFriendlyEnemy.damageInflicted===0)
 	{
 		//adjust the player velocity to the gamePiece velocity
 		var velocityXMod  = onFriendlyEnemy.velocity.x<0?-1*this.velocityModifer:this.velocityModifer;
@@ -515,7 +515,7 @@ GameLevel.prototype.updatePlayerVelocity = function()
 */
 GameLevel.prototype.resetPlayer = function()
 {
-	if(this.player.lives == 0)
+	if(this.player.lives === 0)
 	{
 		this.player.lives = 5;
 		this.player.points = 0;
@@ -599,7 +599,7 @@ GameLevel.prototype.loadNextLevel = function()
 	//accelerate the vehicles
 	this.velocityModifer += cLEVEL_UP;
 	this.resetPlayer();
-}
+};
 
 /*
 * @returns void
@@ -644,7 +644,7 @@ GameLevel.prototype.updatePlayer = function()
 		this.resetGame();
 	
 	//we reached the other side load the next level
-	if(this.player.position.y ==0)
+	if(this.player.position.y ===0)
 		this.loadNextLevel();
 
 };
@@ -697,7 +697,7 @@ GameLevel.prototype.handleKeyPress = function(userInput)//input.js
 	if(userInput.pressedKeys[userInput.LEFT])
 		horizontalIncr--;
 
-	if(verticalIncr!=0 || horizontalIncr!=0)
+	if(verticalIncr!==0 || horizontalIncr!==0)
 	{
 		//ensure that the user cannot move off of the map
 		if((horizontalIncr + player.position.x)<0)

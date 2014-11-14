@@ -37,7 +37,7 @@ Point.prototype.add = function( newX,newY)
 {
 	this.x = this.x +newX;
 	this.y = this.y +newY;
-}
+};
 
 /*
 * @param {Number} newX  subtract to the point.x variable
@@ -48,7 +48,7 @@ Point.prototype.subtract = function( newX,newY)
 {
 	this.x = this.x - newX;
 	this.y = this.y - newY;
-}
+};
 
 /*
 * @param {Point} newPoint - copies the values into this point
@@ -61,4 +61,4 @@ Point.prototype.copy = function(newPoint)
 		this.x = newPoint.x;
 		this.y = newPoint.y;
 	}
-}
+};
